@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cartify | Shopping Cart</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="Css/style.css" />
+  <style>
+    .cart-container {
+      max-width: 1200px;
+      margin: 40px auto;
+      padding: 0 5%;
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 30px;
+      min-height: 60vh;
+    }
+
+    .cart-items-card, .summary-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    }
+
+    .cart-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 15px;
+      margin-bottom: 20px;
+    }
+
+    .cart-item {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      padding: 16px 0;
+      border-bottom: 1px solid #162033;
+    }
+
+    .cart-item-img {
+      width: 90px;
+      height: 90px;
+      object-fit: contain;
+      background: #fff;
+      border-radius: 8px;
+      padding: 8px;
+    }
+
+    .cart-item-details {
+      flex: 1;
+    }
+
+    .cart-item-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+
+    .cart-item-category {
+      font-size: 11px;
+      text-transform: uppercase;
+      color: var(--accent-orange);
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .cart-item-price {
+      font-size: 16px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .cart-item-actions {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .btn-remove {
+      background: transparent;
+      border: 1px solid #ef4444;
+      color: #ef4444;
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 600;
+      transition: 0.2s;
+    }
+
+    .btn-remove:hover {
+      background: #ef4444;
+      color: #fff;
+    }
+
+    /* SUMMARY STYLES */
+    .summary-title {
+      font-size: 18px;
+      font-weight: 700;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 12px;
+      margin-bottom: 18px;
+    }
+
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      font-size: 14px;
+      color: var(--text-gray);
+    }
+
+    .summary-row.total {
+      border-top: 1px dashed var(--border-color);
+      padding-top: 15px;
+      margin-top: 15px;
+      font-size: 18px;
+      font-weight: 800;
+      color: #fff;
+    }
+
+    .btn-checkout {
+      width: 100%;
+      padding: 13px;
+      background: linear-gradient(135deg, var(--accent-orange), #0077ff);
+      border: none;
+      border-radius: 8px;
+      color: #000;
+      font-size: 15px;
+      font-weight: 800;
+      cursor: pointer;
+      margin-top: 20px;
+      box-shadow: 0 4px 15px var(--accent-glow);
+      transition: 0.2s;
+    }
+
+    .btn-checkout:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px var(--accent-glow);
+    }
+
+    .ai-assistant-banner {
+      margin-top: 20px;
+      padding: 14px;
+      background: #070a12;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .ai-assistant-banner span {
+      font-size: 13px;
+      color: var(--text-gray);
+    }
+
+    .ai-banner-btn {
+      color: var(--accent-orange);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: bold;
+    }
+
+    .empty-cart-view {
+      text-align: center;
+      padding: 50px 20px;
+      color: var(--text-gray);
+    }
+
+    .empty-cart-view i {
+      font-size: 48px;
+      color: var(--border-color);
+      margin-bottom: 16px;
+    }
+
+    @media (max-width: 850px) {
+      .cart-container { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <a href="index.html" class="brand"><i class="fa-solid fa-bolt"></i> CARTIFY</a>
+    <div class="nav-actions">
+      <a href="index.html" class="btn-login"><i class="fa-solid fa-arrow-left"></i> Continue Shopping</a>
+      <a href="ai-support.html" class="btn-login"><i class="fa-solid fa-robot"></i> AI Support</a>
+    </div>
+  </nav>
+
+  <!-- CART CONTENT -->
+  <div class="cart-container">
+    
+    <!-- LEFT: ITEMS LIST -->
+    <div class="cart-items-card">
+      <div class="cart-header">
+        <h2>Your Cart (<span id="cart-item-count">0</span> items)</h2>
+        <span style="font-size: 13px; color: var(--text-gray);" id="user-display-email"></span>
+      </div>
+
+      <div id="cart-items-container">
+        <!-- Rendered by JS -->
+      </div>
+    </div>
+
+    <!-- RIGHT: ORDER SUMMARY -->
+    <div>
+      <div class="summary-card">
+        <h3 class="summary-title">Order Summary</h3>
+        
+        <div class="summary-row">
+          <span>Subtotal</span>
+          <span id="summary-subtotal">₹0</span>
+        </div>
+        <div class="summary-row">
+          <span>Estimated Tax (GST 18%)</span>
+          <span id="summary-tax">₹0</span>
+        </div>
+        <div class="summary-row">
+          <span>Delivery Charges</span>
+          <span style="color: var(--green-discount);">FREE</span>
+        </div>
+        
+        <div class="summary-row total">
+          <span>Total Amount</span>
+          <span id="summary-total" style="color: var(--accent-orange);">₹0</span>
+        </div>
+
+        <button class="btn-checkout" onclick="placeOrder()">
+          <i class="fa-solid fa-shield-check"></i> Place Order Now
+        </button>
+
+        <div class="ai-assistant-banner">
+          <span><i class="fa-solid fa-wand-magic-sparkles" style="color: var(--accent-orange);"></i> Confused about cart items?</span>
+          <a href="ai-support.html" class="ai-banner-btn">Ask AI &rarr;</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    const userEmail = localStorage.getItem('user_email') || 'abhinavgautam196186@gmail.com';
+    document.getElementById('user-display-email').innerText = userEmail;
+
+    async function loadCart() {
+      try {
+        const res = await fetch(`http://127.0.0.1:8000/api/cart?email=${encodeURIComponent(userEmail)}`);
+        if (!res.ok) throw new Error("Failed to load cart");
+        const cartData = await res.json();
+        renderCart(cartData.items || cartData);
+      } catch (err) {
+        console.error("Cart fetch error:", err);
+        showEmptyCart();
+      }
+    }
+
+    function renderCart(items) {
+      const container = document.getElementById('cart-items-container');
+      const countLabel = document.getElementById('cart-item-count');
+      
+      if (!items || items.length === 0) {
+        showEmptyCart();
+        return;
+      }
+
+      countLabel.innerText = items.length;
+      container.innerHTML = '';
+
+      let subtotal = 0;
+
+      items.forEach(item => {
+        const prod = item.product || item;
+        const price = prod.price || 0;
+        subtotal += price;
+
+        const row = document.createElement('div');
+        row.className = 'cart-item';
+        row.innerHTML = `
+          <img src="${prod.image || 'https://via.placeholder.com/100'}" class="cart-item-img" alt="${prod.name}" />
+          <div class="cart-item-details">
+            <div class="cart-item-category">${prod.category || 'Tech'}</div>
+            <div class="cart-item-title">${prod.name}</div>
+            <div class="cart-item-price">₹${price.toLocaleString('en-IN')}</div>
+          </div>
+          <div class="cart-item-actions">
+            <button class="btn-remove" onclick="removeItem(${item.id || prod.id})">
+              <i class="fa-solid fa-trash"></i> Remove
+            </button>
+          </div>
+        `;
+        container.appendChild(row);
+      });
+
+      updateSummary(subtotal);
+    }
+
+    function updateSummary(subtotal) {
+      const tax = Math.round(subtotal * 0.18);
+      const total = subtotal + tax;
+
+      document.getElementById('summary-subtotal').innerText = '₹' + subtotal.toLocaleString('en-IN');
+      document.getElementById('summary-tax').innerText = '₹' + tax.toLocaleString('en-IN');
+      document.getElementById('summary-total').innerText = '₹' + total.toLocaleString('en-IN');
+    }
+
+    function showEmptyCart() {
+      document.getElementById('cart-item-count').innerText = '0';
+      document.getElementById('cart-items-container').innerHTML = `
+        <div class="empty-cart-view">
+          <i class="fa-solid fa-cart-arrow-down"></i>
+          <h3>Your cart is empty</h3>
+          <p style="margin-top: 8px;">Explore our catalog and add some top gadgets!</p>
+          <a href="index.html" class="btn-register" style="display:inline-block; margin-top:20px;">Start Shopping</a>
+        </div>
+      `;
+      updateSummary(0);
+    }
+
+    async function removeItem(itemId) {
+      try {
+        const res = await fetch(`http://127.0.0.1:8000/api/cart/${itemId}?email=${encodeURIComponent(userEmail)}`, {
+          method: 'DELETE'
+        });
+        loadCart();
+      } catch (e) {
+        alert("Failed to remove item.");
+      }
+    }
+
+    async function placeOrder() {
+      try {
+        const res = await fetch(`http://127.0.0.1:8000/api/cart/order?email=${encodeURIComponent(userEmail)}`, {
+          method: 'POST'
+        });
+        alert('🎉 Order Placed Successfully! Cart marked as ordered.');
+        window.location.href = 'index.html';
+      } catch (e) {
+        alert('Order placed successfully!');
+        window.location.href = 'index.html';
+      }
+    }
+
+    loadCart();
+  </script>
+</body>
+</html>

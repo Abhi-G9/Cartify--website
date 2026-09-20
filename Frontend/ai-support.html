@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>NovaCart - AI Support</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .chat-box { height: 300px; overflow-y: auto; border: 1px solid #ccc; padding: 10px; background: white; margin-bottom: 10px; }
+        .user-msg { text-align: right; color: blue; margin: 5px 0; }
+        .ai-msg { text-align: left; color: green; margin: 5px 0; }
+    </style>
+</head>
+<body>
+    <nav><h2>NovaCart AI Support</h2><div><a href="cart.html">Back to Cart</a></div></nav>
+    <div class="container">
+        <h3>Ask about the product in your cart</h3>
+        <div class="chat-box" id="chat-box">
+            <div class="ai-msg"><b>AI:</b> Hi! I see you have items in your cart. How can I help you decide?</div>
+        </div>
+        <input type="text" id="chat-input" placeholder="Is this good for gaming?" style="width: 80%; padding: 10px;">
+        <button onclick="sendMessage()" style="width: 15%;">Send</button>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script>
+        async function sendMessage() {
+            const input = document.getElementById('chat-input');
+            const message = input.value;
+            if (!message) return;
+
+            const chatBox = document.getElementById('chat-box');
+            chatBox.innerHTML += `<div class="user-msg"><b>You:</b> ${message}</div>`;
+            input.value = '';
+
+            try {
+                // Ensure auth token is attached in your api.js fetch wrapper
+                const res = await fetchAPI('/ai-support', 'POST', { message: message });
+                chatBox.innerHTML += `<div class="ai-msg"><b>AI:</b> ${res.reply}</div>`;
+                chatBox.scrollTop = chatBox.scrollHeight;
+            } catch (err) {
+                chatBox.innerHTML += `<div class="ai-msg" style="color:red;"><b>Error:</b> Could not connect to AI.</div>`;
+            }
+        }
+    </script>
+</body>
+</html>

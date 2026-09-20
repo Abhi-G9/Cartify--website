@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cartify | Account Access</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <style>
+    :root {
+      --bg-main: #0b0f19;
+      --bg-card: #121826;
+      --accent-orange: #ff6b00;
+      --accent-orange-hover: #e05e00;
+      --text-white: #ffffff;
+      --text-gray: #94a3b8;
+      --border-color: #1e293b;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    body {
+      background-color: var(--bg-main);
+      color: var(--text-white);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background: radial-gradient(circle at top, #1a2333 0%, #0b0f19 80%);
+      padding: 20px;
+    }
+
+    .auth-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 14px;
+      padding: 35px 30px;
+      width: 100%;
+      max-width: 420px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
+
+    .brand-header {
+      text-align: center;
+      margin-bottom: 25px;
+    }
+
+    .brand-header a {
+      font-size: 26px;
+      font-weight: 800;
+      color: var(--accent-orange);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .brand-header p {
+      color: var(--text-gray);
+      font-size: 13px;
+      margin-top: 6px;
+    }
+
+    .tab-switch {
+      display: flex;
+      background: #0b0f19;
+      border-radius: 8px;
+      padding: 4px;
+      margin-bottom: 25px;
+      border: 1px solid var(--border-color);
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: 9px;
+      border: none;
+      background: transparent;
+      color: var(--text-gray);
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      border-radius: 6px;
+      transition: 0.2s;
+    }
+
+    .tab-btn.active {
+      background: var(--accent-orange);
+      color: #fff;
+    }
+
+    .form-group {
+      margin-bottom: 18px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 13px;
+      color: var(--text-gray);
+      margin-bottom: 6px;
+    }
+
+    .input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .input-wrapper i {
+      position: absolute;
+      left: 14px;
+      color: var(--text-gray);
+      font-size: 14px;
+    }
+
+    .input-wrapper input {
+      width: 100%;
+      padding: 11px 14px 11px 40px;
+      background: #0b0f19;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      color: #fff;
+      font-size: 14px;
+      outline: none;
+      transition: 0.2s;
+    }
+
+    .input-wrapper input:focus {
+      border-color: var(--accent-orange);
+    }
+
+    .btn-submit {
+      width: 100%;
+      padding: 12px;
+      background: var(--accent-orange);
+      border: none;
+      border-radius: 6px;
+      color: #fff;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: 0.2s;
+    }
+
+    .btn-submit:hover {
+      background: var(--accent-orange-hover);
+    }
+
+    .status-msg {
+      margin-top: 15px;
+      font-size: 13px;
+      text-align: center;
+      display: none;
+    }
+
+    .back-home {
+      display: block;
+      text-align: center;
+      margin-top: 20px;
+      color: var(--text-gray);
+      text-decoration: none;
+      font-size: 13px;
+      transition: 0.2s;
+    }
+
+    .back-home:hover {
+      color: var(--accent-orange);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="auth-card">
+    <div class="brand-header">
+      <a href="index.html"><i class="fa-solid fa-bolt"></i> CARTIFY</a>
+      <p id="subHeader">Log in to manage your cart & orders</p>
+    </div>
+
+    <div class="tab-switch">
+      <button class="tab-btn active" id="loginTab" onclick="setAuthMode('login')">Login</button>
+      <button class="tab-btn" id="signupTab" onclick="setAuthMode('signup')">Sign Up</button>
+    </div>
+
+    <form id="authForm" onsubmit="handleAuth(event)">
+      <div class="form-group">
+        <label>Email Address</label>
+        <div class="input-wrapper">
+          <i class="fa-solid fa-envelope"></i>
+          <input type="email" id="email" placeholder="name@example.com" required />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Password</label>
+        <div class="input-wrapper">
+          <i class="fa-solid fa-lock"></i>
+          <input type="password" id="password" placeholder="••••••••" required />
+        </div>
+      </div>
+
+      <button type="submit" class="btn-submit" id="submitBtn">Sign In</button>
+      <div class="status-msg" id="statusMsg"></div>
+    </form>
+
+    <a href="index.html" class="back-home"><i class="fa-solid fa-arrow-left"></i> Back to Store</a>
+  </div>
+
+  <script>
+    let mode = 'login';
+
+    function setAuthMode(newMode) {
+      mode = newMode;
+      const statusMsg = document.getElementById('statusMsg');
+      statusMsg.style.display = 'none';
+
+      if (mode === 'login') {
+        document.getElementById('loginTab').classList.add('active');
+        document.getElementById('signupTab').classList.remove('active');
+        document.getElementById('submitBtn').innerText = 'Sign In';
+        document.getElementById('subHeader').innerText = 'Log in to manage your cart & orders';
+      } else {
+        document.getElementById('signupTab').classList.add('active');
+        document.getElementById('loginTab').classList.remove('active');
+        document.getElementById('submitBtn').innerText = 'Create Account';
+        document.getElementById('subHeader').innerText = 'Join Cartify for premium deals';
+      }
+    }
+
+    async function handleAuth(e) {
+      e.preventDefault();
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      const statusMsg = document.getElementById('statusMsg');
+      const submitBtn = document.getElementById('submitBtn');
+
+      statusMsg.style.display = 'block';
+      statusMsg.style.color = 'var(--text-gray)';
+      statusMsg.innerText = 'Connecting...';
+      submitBtn.disabled = true;
+
+      const endpoint = mode === 'login' ? '/api/auth/login' : '/api/auth/signup';
+
+      try {
+        const res = await fetch(`http://127.0.0.1:8000${endpoint}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+          if (mode === 'login') {
+            localStorage.setItem('token', data.access_token);
+            localStorage.setItem('user_email', email);
+            statusMsg.style.color = '#10b981';
+            statusMsg.innerText = '✅ Login successful! Redirecting...';
+            setTimeout(() => {
+              window.location.href = 'index.html';
+            }, 1000);
+          } else {
+            statusMsg.style.color = '#10b981';
+            statusMsg.innerText = '✅ Account created! Switching to login...';
+            setTimeout(() => {
+              setAuthMode('login');
+              submitBtn.disabled = false;
+            }, 1500);
+          }
+        } else {
+          statusMsg.style.color = '#ef4444';
+          statusMsg.innerText = data.detail || 'Authentication failed.';
+          submitBtn.disabled = false;
+        }
+      } catch (err) {
+        statusMsg.style.color = '#ef4444';
+        statusMsg.innerText = '❌ Backend connection error. Ensure server is running.';
+        submitBtn.disabled = false;
+      }
+    }
+  </script>
+</body>
+</html>
